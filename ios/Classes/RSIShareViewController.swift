@@ -200,7 +200,7 @@ open class RSIShareViewController: SLComposeServiceViewController {
             }
         }
 
-        
+
         // Save shared media and redirect to host app
     //    private func saveAndRedirect(message: String? = nil) {
     //        let userDefaults = UserDefaults(suiteName: appGroupId)
