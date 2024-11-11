@@ -181,14 +181,34 @@ open class RSIShareViewController: SLComposeServiceViewController {
     }
     
     
-    // Save shared media and redirect to host app
-    private func saveAndRedirect(message: String? = nil) {
-        let userDefaults = UserDefaults(suiteName: appGroupId)
-        userDefaults?.set(toData(data: sharedMedia), forKey: kUserDefaultsKey)
-        userDefaults?.set(message, forKey: kUserDefaultsMessageKey)
-        userDefaults?.synchronize()
-        redirectToHostApp()
-    }
+        private func saveAndRedirect(message: String? = nil) {
+            let dispatchGroup = DispatchGroup()
+
+            // 파일 저장 작업 시작
+            dispatchGroup.enter()
+            DispatchQueue.global().async {
+                let userDefaults = UserDefaults(suiteName: self.appGroupId)
+                userDefaults?.set(self.toData(data: self.sharedMedia), forKey: kUserDefaultsKey)
+                userDefaults?.set(message, forKey: kUserDefaultsMessageKey)
+                userDefaults?.synchronize()
+                dispatchGroup.leave()
+            }
+
+            // 모든 작업이 완료되면 리디렉션
+            dispatchGroup.notify(queue: .main) {
+                self.redirectToHostApp()
+            }
+        }
+
+        
+        // Save shared media and redirect to host app
+    //    private func saveAndRedirect(message: String? = nil) {
+    //        let userDefaults = UserDefaults(suiteName: appGroupId)
+    //        userDefaults?.set(toData(data: sharedMedia), forKey: kUserDefaultsKey)
+    //        userDefaults?.set(message, forKey: kUserDefaultsMessageKey)
+    //        userDefaults?.synchronize()
+    //        redirectToHostApp()
+    //    }
     
     private func redirectToHostApp() {
         // ids may not loaded yet so we need loadIds here too
